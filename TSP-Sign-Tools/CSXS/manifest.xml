@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ExtensionManifest
+    Version="7.0"
+    ExtensionBundleId="com.tsp.signtools"
+    ExtensionBundleVersion="1.0"
+    ExtensionBundleName="TSP Sign Tools">
+
+    <ExtensionList>
+        <Extension Id="com.tsp.signtools.panel" Version="1.0"/>
+    </ExtensionList>
+
+    <ExecutionEnvironment>
+
+        <HostList>
+            <Host Name="ILST" Version="[29.0,99.9]"/>
+        </HostList>
+
+        <LocaleList>
+            <Locale Code="All"/>
+        </LocaleList>
+
+        <RequiredRuntimeList>
+            <RequiredRuntime Name="CSXS" Version="12.0"/>
+        </RequiredRuntimeList>
+
+    </ExecutionEnvironment>
+
+    <DispatchInfoList>
+
+        <Extension Id="com.tsp.signtools.panel">
+
+            <DispatchInfo>
+
+                <Resources>
+                    <MainPath>./index.html</MainPath>
+                    <CEFCommandLine>
+                        <Parameter>--enable-media-cache</Parameter>
+                    </CEFCommandLine>
+                </Resources>
+
+                <Lifecycle>
+
+                    <AutoVisible>true</AutoVisible>
+
+                </Lifecycle>
+
+                <UI>
+
+                    <Type>Panel</Type>
+
+                    <Menu>TSP Sign Tools</Menu>
+
+                    <Geometry>
+
+                        <Size>
+                            <Height>700</Height>
+                            <Width>420</Width>
+                        </Size>
+
+                    </Geometry>
+
+                </UI>
+
+            </DispatchInfo>
+
+        </Extension>
+    </DispatchInfoList>
+
+</ExtensionManifest>

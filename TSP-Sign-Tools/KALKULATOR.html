@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Signage Calculator</title>
+<script type="text/javascript" src="https://me.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=Dnsi2ABlF-ml2oV7NAva-J_T8TITMUfHh7D40mooUltzLXad9gg2ev8eO5CKc3lxz4QbIPd86KqqwNPeQjbDIls5gq5W64VBbdn1ccAvIdD7mJGOsQPniRyNy9igeDQV7mNM3Tuk_UeeRib7vPy-EBCuz6RhZ0aAZzvH-pZTMoV8TiYMXUvJhSU0uy_ODqfGWhY04SOUy4I-uykDD54_FFUliDJU6p-jq-pA1CQhMvKa_ULvJ1L6FhYaej5lTEoWMK7Sqr0cZPZcJQBCnbsCqzichu4JUBz9gDFIJs2sMB8zlVdNge3ceotPUjW2EwGJuBIBK4mewn-bt69mROMzww" charset="UTF-8"></script><style>
+
+:root{--bg-color:#f4f7f6;--card-bg:#fff;--text-main:#333;--accent-color:#007acc;--result-bg:#eefdf5;--result-text:#2d8a55}
+*{box-sizing:border-box}html,body{width:100%;margin:0;padding:0}
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:var(--bg-color);color:var(--text-main);padding:8px;overflow-x:hidden}
+.calc-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:#fff;padding:4px;border-radius:10px;margin-bottom:8px;position:sticky;top:0;z-index:5}
+.calc-tab{background:#eef2f6;color:#667;padding:8px 2px;font-size:9px;margin:0;border:0;border-radius:7px}
+.calc-tab.active{background:#007acc;color:#fff}.calc-panel{display:none}.calc-panel.active{display:block}
+.card{background:#fff;padding:14px;border-radius:10px;box-shadow:0 3px 8px rgba(0,0,0,.05);margin:0}
+h2{font-size:15px;margin:0 0 10px;color:#555}
+input,select,textarea{width:100%;padding:10px;font-size:14px;margin:5px 0 8px;background:#fafafa;border:1px solid #ddd;border-radius:7px;box-sizing:border-box}
+button{background:#007acc;color:#fff;border:0;padding:9px 12px;border-radius:6px;cursor:pointer;font-weight:600;width:100%;margin-bottom:0}
+.result{background:var(--result-bg);padding:12px;border-radius:7px;font-size:20px;font-weight:bold;color:var(--result-text);margin:7px 0;text-align:center;border:1px solid #d1eadb}
+.operator-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px}
+.btn-op{background:#e1f0fa;color:#007acc;font-size:18px;padding:9px;border:1px solid #bce0fd}
+.unit-wrapper{display:flex;align-items:center;justify-content:center;gap:8px;margin:5px 0 10px}
+.toggle{width:44px;height:22px;background:#007acc;border-radius:11px;position:relative;cursor:pointer;display:inline-block;margin:0 8px;vertical-align:middle}
+.toggle-knob{width:18px;height:18px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:left .2s}.toggle.active .toggle-knob{left:24px}
+.unit-wrapper span{font-size:10px;font-weight:bold;color:#888;cursor:pointer}.unit-wrapper span.active{color:#007acc}
+.btn-row{display:flex;gap:6px}.btn-row button{flex:1}.two-col{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+small{font-size:10px;color:#888}br{display:none}hr{margin:10px 0!important}
+
+.calc-tabs{grid-template-columns:repeat(2,1fr)!important}
+.calc-panel{display:none}
+.calc-panel.active{display:flex;flex-direction:column;gap:8px}
+.calc-panel .card{width:100%;margin:0}
+
+/* COMPACT AREA CALCULATOR */
+#calcPanel1 .card{
+    padding:10px 14px;
+}
+
+#calcPanel1 input{
+    padding:7px 10px;
+    margin:3px 0 5px;
+}
+
+#calcPanel1 .result{
+    padding:7px;
+    font-size:17px;
+    margin:5px 0;
+}
+
+#calcPanel1 button{
+    padding:7px 10px;
+}
+
+#calcPanel1 hr{
+    margin:6px 0 !important;
+}
+
+</style>
+</head>
+<body>
+
+<div class="calc-tabs">
+    <button class="calc-tab active" data-calc="0">CALCULATOR</button>
+    <button class="calc-tab" data-calc="1">AREA</button>
+</div>
+
+<div class="calc-panel active" id="calcPanel0">
+    <div class="card">
+        <h2>Basic Math</h2>
+        <input id="num1" type="number" placeholder="First Number">
+        <input id="num2" type="number" placeholder="Second Number">
+
+        <div class="operator-grid">
+            <button class="btn-op" onclick="calculateBasic('+')">+</button>
+            <button class="btn-op" onclick="calculateBasic('-')">−</button>
+            <button class="btn-op" onclick="calculateBasic('*')">×</button>
+            <button class="btn-op" onclick="calculateBasic('/')">÷</button>
+        </div>
+
+        <div class="result" id="basicResult">-</div>
+        <button onclick="copy('basicResult')">Copy</button>
+    </div>
+
+    <div class="card">
+        <h2>Converter</h2>
+        <div class="unit-wrapper">
+            <span id="lblToFeet" class="active">INCH → FEET</span>
+            <div id="convToggle" class="toggle">
+                <div class="toggle-knob"></div>
+            </div>
+            <span id="lblToInch">FEET → INCH</span>
+        </div>
+
+        <input id="convInput" type="text" placeholder="162">
+        <div class="result" id="convResult">-</div>
+        <button onclick="copy('convResult')">Copy</button>
+    </div>
+</div>
+
+<div class="calc-panel" id="calcPanel1">
+    <div class="card">
+        <h2>Square Foot &amp; Coverage</h2>
+        <button id="btnDetect" style="background:#4CB857;">Detect Object</button>
+
+        Width
+        <input id="w" type="text" placeholder='eg: 120 or 10"-0 1/2"'>
+
+        Height
+        <input id="h" type="text" placeholder='eg: 48 or 4"-0 1/4"'>
+
+        <div class="result" id="sqft">-</div>
+
+        <div class="btn-row">
+            <button onclick="copy('sqft')">Copy</button>
+            <button id="btnCountAllowed" style="background:#4CB857;">Count Allowed</button>
+        </div>
+
+        <hr style="margin:16px 0;border:none;border-top:1px solid #eee;">
+
+        Total Area (sqft)
+        <input id="area" type="number">
+
+        Coverage (%)
+        <input id="pct" type="number" value="25" step="0.1" placeholder="25">
+
+        <div class="result" id="allow">-</div>
+        <button onclick="copy('allow')">Copy</button>
+    </div>
+</div>
+
+<script>
+// Logic baru untuk Kalkulator Dasar (Langsung operasikan berdasarkan tombol yang ditekan)
+function calculateBasic(op) {
+    let n1 = parseFloat(document.getElementById('num1').value);
+    let n2 = parseFloat(document.getElementById('num2').value);
+    let resOut = document.getElementById('basicResult');
+
+    if (isNaN(n1) || isNaN(n2)) {
+        resOut.innerText = "FILL THE NUMBER";
+        return;
+    }
+
+    let hasil = 0;
+    if (op === '+') {
+        hasil = n1 + n2;
+    } else if (op === '-') {
+        hasil = n1 - n2;
+    } else if (op === '*') {
+        hasil = n1 * n2;
+    } else if (op === '/') {
+        hasil = n2 !== 0 ? (n1 / n2) : "Error (div 0)";
+    }
+
+    resOut.innerText = typeof hasil === 'number' ? hasil.toFixed(2) : hasil;
+}
+
+// =========================================================
+// FIX COPIED FUNCTION UNTUK ADOBE CEP PANEL (WINDOWS & MAC)
+// =========================================================
+function copy(id) {
+    var txt = document.getElementById(id).innerText;
+    if (!txt || txt === "-") return;
+
+    txt = txt.trim(); 
+
+    var tempInput = document.createElement("textarea");
+    tempInput.value = txt;
+    document.body.appendChild(tempInput);
+    
+    tempInput.select();
+    tempInput.setSelectionRange(0, 99999);
+
+    try {
+        var successful = document.execCommand('copy');
+        if (!successful) {
+            alert("Gagal menyalin teks.");
+        }
+    } catch (err) {
+        alert("Browser CEP tidak mendukung fitur copy.");
+    }
+
+    document.body.removeChild(tempInput);
+}
+
+function toSuperscript(n) {
+    const map = {'0':'\u2070','1':'\u00B9','2':'\u00B2','3':'\u00B3','4':'\u2074','5':'\u2075','6':'\u2076','7':'\u2077','8':'\u2078','9':'\u2079'};
+    return n.toString().split('').map(c => map[c] || c).join('');
+}
+
+function toSubscript(n) {
+    const map = {'0':'\u2080','1':'\u2081','2':'\u2082','3':'\u2083','4':'\u2084','5':'\u2085','6':'\u2086','7':'\u2087','8':'\u2088','9':'\u2089'};
+    return n.toString().split('').map(c => map[c] || c).join('');
+}
+
+function fromSuperscript(s) {
+    const map = {'\u2070':'0','\u00B9':'1','\u00B2':'2','\u00B3':'3','\u2074':'4','\u2075':'5','\u2076':'6','\u2077':'7','\u2078':'8','\u2079':'9'};
+    return s.split('').map(c => map[c] || c).join('');
+}
+
+function fromSubscript(s) {
+    const map = {'\u2080':'0','\u2081':'1','\u2082':'2','\u2083':'3','\u2084':'4','\u2085':'5','\u2086':'6','\u2087':'7','\u2088':'8','\u2089':'9'};
+    return s.split('').map(c => map[c] || c).join('');
+}
+
+function parseFraction(str) {
+    if (!str) return 0;
+
+    str = str.trim();
+
+    // unicode fraction
+    const unicode = {
+        "½":0.5,
+        "¼":0.25,
+        "¾":0.75,
+        "⅛":0.125,
+        "⅜":0.375,
+        "⅝":0.625,
+        "⅞":0.875
+    };
+
+    if (unicode[str] !== undefined)
+        return unicode[str];
+
+    // superscript/subscript format: ¹/₂, ³/₄, ¹³/₁₆
+    let ssMatch = str.match(/^([\u2070\u00B9\u00B2\u00B3\u2074-\u2079]+)\/([\u2080-\u2089]+)$/);
+    if (ssMatch) {
+        let num = parseInt(fromSuperscript(ssMatch[1]));
+        let den = parseInt(fromSubscript(ssMatch[2]));
+        if (den > 0) return num / den;
+    }
+
+    // format 3/8
+    let m = str.match(/^(\d+)\s*\/\s*(\d+)$/);
+    if (m)
+        return parseInt(m[1]) / parseInt(m[2]);
+
+    return parseFloat(str) || 0;
+}
+
+var convMode = "toFeet";
+
+document.getElementById('convToggle').onclick = function() {
+    this.classList.toggle("active");
+    if (this.classList.contains("active")) {
+        document.getElementById('lblToFeet').classList.remove("active");
+        document.getElementById('lblToInch').classList.add("active");
+        convMode = "toInch";
+        document.getElementById('convInput').placeholder = "13'-6\"";
+    } else {
+        document.getElementById('lblToFeet').classList.add("active");
+        document.getElementById('lblToInch').classList.remove("active");
+        convMode = "toFeet";
+        document.getElementById('convInput').placeholder = "162";
+    }
+    document.getElementById('convInput').value = "";
+    document.getElementById('convResult').innerText = "-";
+};
+
+document.getElementById('convInput').oninput = function() {
+    var val = this.value.trim();
+    if (!val) { document.getElementById('convResult').innerText = "-"; return; }
+    
+    if (convMode === "toFeet") {
+        var i = parseFloat(val);
+        if (isNaN(i)) { document.getElementById('convResult').innerText = "-"; return; }
+        var ft = Math.floor(i / 12);
+        var inches = i - ft * 12;
+        document.getElementById('convResult').innerText = ft + "'-" + inches.toFixed(2) + '"';
+    } else {
+    var total;
+
+    // Kalau ada tanda feet/inch, parse sebagai dimension
+    if (val.indexOf("'") !== -1 || val.indexOf('"') !== -1) {
+        total = parseDim(val);
+    } else {
+        // Plain number dianggap FEET
+        var feet = parseFloat(val);
+        total = isNaN(feet) ? NaN : feet * 12;
+    }
+
+    if (isNaN(total)) {
+        document.getElementById('convResult').innerText = "-";
+        return;
+    }
+
+    document.getElementById('convResult').innerText =
+        total.toFixed(2) + '"';
+}
+};
+
+function parseDim(str) {
+    if (!str || !str.trim()) return NaN;
+    str = str.trim();
+    
+    // Hilangkan tanda petik dua di paling akhir jika ada, biar tidak mengganggu parseFloat
+    if (str.endsWith('"')) {
+        str = str.slice(0, -1).trim();
+    }
+    
+    var num = parseFloat(str);
+    if (!isNaN(num) && str.indexOf("/") === -1 && str.indexOf("'") === -1) return num;
+    
+    // Regex yang lebih aman untuk menangkap Feet, Inch, dan Pecahan
+    var m = str.match(/^(\d+)\s*'\s*-?\s*(\d+)?(?:\s*(\d+)\s*\/\s*(\d+))?/);
+    if (m) {
+        var ft = parseFloat(m[1]) || 0;
+        var inch = parseFloat(m[2]) || 0;
+        var n = parseFloat(m[3]) || 0;
+        var d = parseFloat(m[4]) || 0;
+        return (ft * 12) + inch + (d ? n / d : 0);
+    }
+    return parseFraction(str);
+}
+
+// Sqft Calculator
+function calc() {
+    var w = parseDim(document.getElementById('w').value);
+    var h = parseDim(document.getElementById('h').value);
+    if (isNaN(w) || isNaN(h) || !w || !h) {
+        document.getElementById('sqft').innerText = '-';
+        return;
+    }
+    document.getElementById('sqft').innerText = ((w * h) / 144).toFixed(2) + ' sqft';
+}
+document.getElementById('w').oninput = calc;
+document.getElementById('h').oninput = calc;
+
+document.getElementById('btnDetect').onclick = function() {
+    if (typeof parent.detectObjectInIllustrator !== 'function') {
+        alert("Panel not ready.");
+        return;
+    }
+    parent.detectObjectInIllustrator(function(result) {
+        if (!result) { alert("No result from Illustrator."); return; }
+        if (result.indexOf("ERROR:") === 0) { alert(result.replace("ERROR:","")); return; }
+        var p = result.split(":");
+        document.getElementById('w').value = fmtInch(parseFloat(p[0]));
+        document.getElementById('h').value = fmtInch(parseFloat(p[1]));
+        calc();
+    });
+};
+
+function gcd(a,b) { while(b){var t=b;b=a%b;a=t;} return a; }
+
+function fmtInch(v) {
+    var d = 8;
+    var t = Math.round(v * d) / d;
+    var f = Math.floor(t / 12);
+    var r = t - f * 12;
+    var w = Math.floor(r);
+    var n = Math.round((r - w) * d + 1e-10);
+    if (n === d) { w++; n = 0; }
+    var s = f + "'-";
+    if (n > 0) { var g = gcd(n, d); s += (w > 0 ? w + " " : "") + (n/g) + "/" + (d/g) + '"'; }
+    else s += w + '"';
+    return s;
+}
+
+document.getElementById('btnCountAllowed').onclick = function() {
+    var txt = document.getElementById('sqft').innerText;
+    var m = txt.match(/^[\d.]+/);
+    if (!m) { alert("Calculate square footage first."); return; }
+    document.getElementById('area').value = parseFloat(m[0]);
+    cov();
+};
+
+// Allowed Coverage
+function cov() {
+    let a = +document.getElementById('area').value;
+    let p = +document.getElementById('pct').value;
+    if (!a) { document.getElementById('allow').innerText = '-'; return; }
+    document.getElementById('allow').innerText = (a * p / 100).toFixed(2) + ' sqft';
+}
+document.getElementById('area').oninput = cov;
+document.getElementById('pct').onchange = cov;
+
+
+</script>
+
+<script>
+(function(){
+var t=document.querySelectorAll(".calc-tab");
+for(var i=0;i<t.length;i++){t[i].onclick=function(){
+var n=this.getAttribute("data-calc"),p=document.querySelectorAll(".calc-panel");
+for(var j=0;j<t.length;j++)t[j].classList.remove("active");
+for(var k=0;k<p.length;k++)p[k].classList.remove("active");
+this.classList.add("active");document.getElementById("calcPanel"+n).classList.add("active");
+};}
+})();
+</script>
+</body>
+</html>
